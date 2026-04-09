@@ -1,9 +1,179 @@
-<div id="qr" class="tool-box">
-  <h2>QR Code Generator</h2>
-  <input type="text" id="qrText" placeholder="Enter text or URL">
-  <br>
-  <button onclick="generateQR()">Generate</button>
-  <br><br>
-  <button onclick="downloadQR()">Download QR</button>
-  <div id="qrcode"></div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ToolNova - All Tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- QR Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Barcode Library -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg,#667eea,#764ba2);
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      padding: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 10px;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      color: black;
+      padding: 15px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .tool {
+      display: none;
+      padding: 20px;
+    }
+
+    input, textarea {
+      width: 80%;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      background: #ff7b00;
+      color: white;
+      cursor: pointer;
+    }
+
+    img, canvas {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🚀 ToolNova</h1>
+
+<div class="grid">
+  <div class="card" onclick="show('qr')">QR Generator</div>
+  <div class="card" onclick="show('bar')">Barcode</div>
+  <div class="card" onclick="show('yt')">YouTube Tool</div>
+  <div class="card" onclick="show('img')">Image Tool</div>
 </div>
+
+<!-- QR -->
+<div id="qr" class="tool">
+  <h2>QR Code Generator</h2>
+  <input id="qrText" placeholder="Enter text">
+  <br>
+  <button onclick="makeQR()">Generate</button>
+  <button onclick="downloadQR()">Download</button>
+  <div id="qrBox"></div>
+</div>
+
+<!-- Barcode -->
+<div id="bar" class="tool">
+  <h2>Barcode Generator</h2>
+  <input id="barText" placeholder="Enter text">
+  <br>
+  <button onclick="makeBar()">Generate</button>
+  <button onclick="downloadBar()">Download</button>
+  <br>
+  <svg id="barcode"></svg>
+</div>
+
+<!-- YouTube -->
+<div id="yt" class="tool">
+  <h2>YouTube Thumbnail</h2>
+  <input id="ytLink" placeholder="Paste YouTube link">
+  <br>
+  <button onclick="getThumb()">Get Thumbnail</button>
+  <br>
+  <img id="thumb" width="250">
+</div>
+
+<!-- Image Tool -->
+<div id="img" class="tool">
+  <h2>Image Preview Tool</h2>
+  <input type="file" onchange="previewImg(event)">
+  <br>
+  <img id="preview" width="200">
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.tool').forEach(e=>e.style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+/* QR */
+function makeQR(){
+  document.getElementById("qrBox").innerHTML="";
+  new QRCode(document.getElementById("qrBox"), {
+    text: document.getElementById("qrText").value,
+    width:200,
+    height:200
+  });
+}
+
+function downloadQR(){
+  let img = document.querySelector("#qrBox img");
+  if(!img){alert("Generate first");return;}
+  let a=document.createElement('a');
+  a.href=img.src;
+  a.download="qr.png";
+  a.click();
+}
+
+/* Barcode */
+function makeBar(){
+  JsBarcode("#barcode", document.getElementById("barText").value);
+}
+
+function downloadBar(){
+  let svg=document.getElementById("barcode");
+  let data=new XMLSerializer().serializeToString(svg);
+  let blob=new Blob([data],{type:"image/svg+xml"});
+  let url=URL.createObjectURL(blob);
+
+  let a=document.createElement('a');
+  a.href=url;
+  a.download="barcode.svg";
+  a.click();
+}
+
+/* YouTube */
+function getThumb(){
+  let link=document.getElementById("ytLink").value;
+  let id=link.split("v=")[1];
+  document.getElementById("thumb").src="https://img.youtube.com/vi/"+id+"/maxresdefault.jpg";
+}
+
+/* Image Preview */
+function previewImg(e){
+  let reader=new FileReader();
+  reader.onload=function(){
+    document.getElementById("preview").src=reader.result;
+  }
+  reader.readAsDataURL(e.target.files[0]);
+}
+</script>
+
+</body>
+</html>

@@ -4,23 +4,20 @@
   <title>ToolNova - All Tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- QR Library -->
+  <!-- QR + Barcode -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <!-- Barcode Library -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode"></script>
 
   <style>
     body {
       margin: 0;
       font-family: Arial;
-      background: linear-gradient(135deg,#667eea,#764ba2);
+      background: linear-gradient(135deg,#4facfe,#00f2fe);
       color: white;
       text-align: center;
     }
 
-    h1 {
-      padding: 15px;
-    }
+    h1 { padding: 15px; }
 
     .grid {
       display: grid;
@@ -36,6 +33,11 @@
       border-radius: 15px;
       cursor: pointer;
       font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
     }
 
     .tool {
@@ -58,9 +60,10 @@
       background: #ff7b00;
       color: white;
       cursor: pointer;
+      margin: 5px;
     }
 
-    img, canvas {
+    img, canvas, svg {
       margin-top: 15px;
     }
   </style>
@@ -75,6 +78,7 @@
   <div class="card" onclick="show('bar')">Barcode</div>
   <div class="card" onclick="show('yt')">YouTube Tool</div>
   <div class="card" onclick="show('img')">Image Tool</div>
+  <div class="card" onclick="show('compress')">Compress</div>
 </div>
 
 <!-- QR -->
@@ -104,19 +108,29 @@
   <input id="ytLink" placeholder="Paste YouTube link">
   <br>
   <button onclick="getThumb()">Get Thumbnail</button>
+  <button onclick="downloadThumb()">Download</button>
   <br>
   <img id="thumb" width="250">
 </div>
 
-<!-- Image Tool -->
+<!-- Image Preview -->
 <div id="img" class="tool">
-  <h2>Image Preview Tool</h2>
+  <h2>Image Preview</h2>
   <input type="file" onchange="previewImg(event)">
   <br>
   <img id="preview" width="200">
 </div>
 
+<!-- Image Compress -->
+<div id="compress" class="tool">
+  <h2>Image Compressor</h2>
+  <input type="file" onchange="compressImage(event)">
+  <br>
+  <img id="compressImg" width="200">
+</div>
+
 <script>
+
 function show(id){
   document.querySelectorAll('.tool').forEach(e=>e.style.display='none');
   document.getElementById(id).style.display='block';
@@ -165,6 +179,15 @@ function getThumb(){
   document.getElementById("thumb").src="https://img.youtube.com/vi/"+id+"/maxresdefault.jpg";
 }
 
+function downloadThumb(){
+  let img=document.getElementById("thumb").src;
+  if(!img){alert("Generate first");return;}
+  let a=document.createElement('a');
+  a.href=img;
+  a.download="thumbnail.jpg";
+  a.click();
+}
+
 /* Image Preview */
 function previewImg(e){
   let reader=new FileReader();
@@ -173,6 +196,30 @@ function previewImg(e){
   }
   reader.readAsDataURL(e.target.files[0]);
 }
+
+/* Compress */
+function compressImage(e){
+  let reader=new FileReader();
+  reader.onload=function(){
+    let img=new Image();
+    img.src=reader.result;
+
+    img.onload=function(){
+      let canvas=document.createElement("canvas");
+      let ctx=canvas.getContext("2d");
+
+      canvas.width=img.width/2;
+      canvas.height=img.height/2;
+
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+      let url=canvas.toDataURL("image/jpeg",0.6);
+      document.getElementById("compressImg").src=url;
+    }
+  }
+  reader.readAsDataURL(e.target.files[0]);
+}
+
 </script>
 
 </body>

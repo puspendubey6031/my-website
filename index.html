@@ -1,9 +1,13 @@
-<div id="qr" class="tool-box">
-  <h2>QR Code Generator</h2>
-  <input type="text" id="qrText" placeholder="Enter text or URL">
-  <br>
-  <button onclick="generateQR()">Generate</button>
-  <br><br>
-  <button onclick="downloadQR()">Download QR</button>
-  <div id="qrcode"></div>
-</div>
+function downloadQR() {
+  let img = document.querySelector("#qrcode img");
+  
+  if (!img) {
+    alert("Please generate QR code first!");
+    return;
+  }
+
+  let link = document.createElement('a');
+  link.href = img.src;
+  link.download = "qrcode.png";
+  link.click();
+}

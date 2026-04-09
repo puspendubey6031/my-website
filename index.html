@@ -1,44 +1,117 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Puspen Website</title>
+  <title>ToolNova - Free Online Tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
       margin: 0;
       font-family: Arial;
-      text-align: center;
       background: linear-gradient(to right, #4facfe, #00f2fe);
       color: white;
-    }
-    .box {
-      margin-top: 100px;
+      text-align: center;
     }
     h1 {
-      font-size: 30px;
+      padding: 20px;
     }
-    p {
-      font-size: 18px;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 20px;
     }
-    button {
-      padding: 12px 25px;
-      border: none;
+    .card {
       background: white;
-      color: #333;
-      font-size: 16px;
-      border-radius: 25px;
+      color: black;
+      padding: 15px;
+      border-radius: 15px;
       cursor: pointer;
     }
-    button:hover {
-      background: #ddd;
+    input {
+      padding: 10px;
+      width: 80%;
+      margin: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #4facfe;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #qrcode {
+      margin-top: 15px;
+    }
+    .tool-box {
+      display: none;
+      padding: 20px;
     }
   </style>
 </head>
+
 <body>
-  <div class="box">
-    <h1>Welcome Puspen 👋</h1>
-    <p>এটা আমার stylish website</p>
-    <button onclick="alert('Hello Bro 😎')">Click Me</button>
-  </div>
+
+<h1>🚀 ToolNova</h1>
+
+<div class="container">
+  <div class="card" onclick="openTool('qr')">QR Code Generator</div>
+  <div class="card" onclick="openTool('password')">Password Generator</div>
+  <div class="card" onclick="openTool('word')">Word Counter</div>
+</div>
+
+<!-- QR Tool -->
+<div id="qr" class="tool-box">
+  <h2>QR Code Generator</h2>
+  <input type="text" id="qrText" placeholder="Enter text or URL">
+  <br>
+  <button onclick="generateQR()">Generate</button>
+  <div id="qrcode"></div>
+</div>
+
+<!-- Password Tool -->
+<div id="password" class="tool-box">
+  <h2>Password Generator</h2>
+  <button onclick="generatePassword()">Generate Password</button>
+  <p id="pass"></p>
+</div>
+
+<!-- Word Counter -->
+<div id="word" class="tool-box">
+  <h2>Word Counter</h2>
+  <textarea id="text" rows="5" style="width:80%"></textarea>
+  <br>
+  <button onclick="countWords()">Count</button>
+  <p id="result"></p>
+</div>
+
+<script>
+function openTool(id) {
+  document.querySelectorAll('.tool-box').forEach(el => el.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+
+function generateQR() {
+  document.getElementById("qrcode").innerHTML = "";
+  new QRCode(document.getElementById("qrcode"), document.getElementById("qrText").value);
+}
+
+function generatePassword() {
+  let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let pass = "";
+  for (let i = 0; i < 8; i++) {
+    pass += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  document.getElementById("pass").innerText = pass;
+}
+
+function countWords() {
+  let text = document.getElementById("text").value;
+  let words = text.trim().split(/\s+/).length;
+  document.getElementById("result").innerText = "Words: " + words;
+}
+</script>
+
 </body>
 </html>
